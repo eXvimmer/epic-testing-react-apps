@@ -21,3 +21,37 @@ test('exposes the count and increment/decrement functions', async () => {
   act(result.decrement)
   expect(result.count).toBe(0)
 })
+
+function setup(...args) {
+  const result = {}
+  function TestComponent() {
+    Object.assign(result, useCounter(...args))
+    return null
+  }
+
+  render(<TestComponent />)
+  return result
+}
+
+test('allows customization of initial count', () => {
+  const counterData = setup({initialCount: 2})
+
+  expect(counterData.count).toBe(2)
+
+  act(() => counterData.increment())
+  expect(counterData.count).toBe(3)
+
+  act(() => counterData.decrement())
+  expect(counterData.count).toBe(2)
+})
+
+test('allows customization of the step', () => {
+  const counterData = setup({step: 2})
+  expect(counterData.count).toBe(0)
+
+  act(counterData.increment)
+  expect(counterData.count).toBe(2)
+
+  act(counterData.decrement)
+  expect(counterData.count).toBe(0)
+})
